@@ -1,6 +1,7 @@
 const Auth = require("../../models/auth");
 const path = require("path");
 const fs = require("fs/promises");
+const Jimp = require("jimp");
 
 const updateAvatar = async (req, res, next) => {
   try {
@@ -14,7 +15,10 @@ const updateAvatar = async (req, res, next) => {
     );
 
     try {
-      await fs.rename(tmpPath, publicPath);
+      const image = await Jimp.read(tmpPath);
+      await image.resize(250, 250);
+      await image.write(publicPath);
+      await fs.unlink(tmpPath);
     } catch (error) {
       await fs.unlink(tmpPath);
       throw error;

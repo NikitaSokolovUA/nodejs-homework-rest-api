@@ -7,7 +7,7 @@ const {
   changeContact,
   updateStatusContact,
 } = require("../../controller/contacts");
-const { authByToken } = require("../../middlewar/authByToken");
+const { authByToken } = require("../../middleware/authByToken");
 
 const router = express.Router();
 

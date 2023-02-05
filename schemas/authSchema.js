@@ -1,10 +1,13 @@
-const { Schema } = require("mongoose");
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const gravatar = require("gravatar");
 
-const authSchema = Schema(
+const authSchema = mongoose.Schema(
   {
     password: {
       type: String,
       required: [true, "Set password for user"],
+      minlenfth: [6, "password is at least 6 symbols"],
     },
     email: {
       type: String,
@@ -16,6 +19,9 @@ const authSchema = Schema(
       enum: ["starter", "pro", "business"],
       default: "starter",
     },
+    avatarUrl: {
+      type: String,
+    },
     token: String,
   },
   {
@@ -23,5 +29,22 @@ const authSchema = Schema(
     timestamps: true,
   }
 );
+
+authSchema.pre("save", async function () {
+  const salt = await bcrypt.genSalt();
+  const cryptPassword = await bcrypt.hash(this.password, salt);
+
+  this.password = cryptPassword;
+});
+
+authSchema.pre("save", async function () {
+  const urlAvatar = gravatar.url(
+    this.email,
+    { s: "200", r: "pg", d: "wavatar" },
+    false
+  );
+
+  this.avatarUrl = urlAvatar;
+});
 
 module.exports = authSchema;

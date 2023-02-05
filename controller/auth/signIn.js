@@ -16,6 +16,10 @@ const signIn = async (req, res, next) => {
     const isComparedPass = await bcrypt.compare(password, user.password);
     const { Unauthorized } = require("http-errors");
 
+    if (!user.verify) {
+      return res.status(400).json({ message: "please confirm your email" });
+    }
+
     const { JWT_CODE } = process.env;
     const token = jwt.sign({ id: user.id }, JWT_CODE, { expiresIn: "7d" });
 

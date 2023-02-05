@@ -6,6 +6,8 @@ const {
   current,
   changeSubscription,
   updateAvatar,
+  verifyEmail,
+  resendingEmail,
 } = require("../../controller/auth");
 const { authByToken, uploadAvatar } = require("../../middleware");
 
@@ -22,5 +24,7 @@ router.patch(
   uploadAvatar.single("avatar"),
   updateAvatar
 );
+router.get("/verify/:verificationToken", verifyEmail);
+router.post("/verify", resendingEmail);
 
 module.exports = router;
